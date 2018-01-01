@@ -8,15 +8,7 @@ Date::Date(int day, int month, int year)
 }
 
 
-void Date::operator=(Date &pOther)
-{
-    day = pOther.getDay();
-    month = pOther.getMonth();
-    year = pOther.getYear();
-}
-
-
-int Date::getCurrentDaysInTheMonth()
+int Date::getDaysInTheCurrentMonth()
 {
     switch(month)
     {
@@ -53,6 +45,36 @@ int Date::getDaysBetween(Date otherDate)
     // checked when other is later
 
 
+}
+
+bool Date::setDay(int day)
+{
+    if(day > 0 && day <= getDaysInTheCurrentMonth())
+    {
+        this->day = day;
+        return true;
+    }
+
+    else
+        return false;
+}
+
+bool Date::setMonth(int month)
+{
+    if(month > 0 && month < 13)
+    {
+        this->month = month;
+        return true;
+    }
+
+    else
+        return false;
+}
+
+bool Date::setYear(int year)
+{
+    this->year = year;
+    return true;
 }
 
 bool Date::operator<(Date &pOther)
@@ -108,5 +130,52 @@ bool Date::yearIsLeap()
     }
 
     return false;
+}
+
+
+Date Date::newDateByOffsetInDays(int offsetInDays)
+{
+    int remainingOffset = offsetInDays;
+    Date newDate(day, month, year);
+
+    // Initial
+
+    if(remainingOffset > newDate.getDaysInTheCurrentMonth() - newDate.day)
+    {
+        int oldDay = newDate.day;
+        newDate.day = newDate.getDaysInTheCurrentMonth();
+        remainingOffset =  remainingOffset - (newDate.getDaysInTheCurrentMonth() - oldDay);
+    }
+    else
+    {
+        newDate.day += remainingOffset;
+        remainingOffset = 0;
+    }
+
+    // Main loop
+
+    while(remainingOffset > 0)
+    {
+        if(!newDate.setMonth(newDate.month + 1))
+        {
+            newDate.setYear(newDate.year + 1);
+            newDate.setMonth(1);
+        }
+        newDate.day = 0;
+
+
+        if(remainingOffset > newDate.getDaysInTheCurrentMonth())
+        {
+            newDate.day = newDate.getDaysInTheCurrentMonth();
+            remainingOffset -= newDate.getDaysInTheCurrentMonth();
+        }
+        else
+        {
+            newDate.day += remainingOffset;
+            remainingOffset = 0;
+        }
+    }
+
+    return newDate;
 }
 
