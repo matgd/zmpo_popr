@@ -11,7 +11,7 @@ int main()
     Date d5(12, 5, 2018);
     cout<<d.getYear()<<" "<<d.getMonth()<<" "<<d.getDay()<<"\n";
  //   d = d1;
-    d = d.newDateByOffsetInDays(5224);
+    d = d.newDateByOffsetInDays(-130);
     cout<<d.getYear()<<" "<<d.getMonth()<<" "<<d.getDay()<<"\n";
     cout<<"d < d1  "<<(d < d1)<<endl;
     cout<<"d2 < d3 "<<(d2 < d3)<<endl;

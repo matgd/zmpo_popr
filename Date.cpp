@@ -32,7 +32,6 @@ int Date::getDaysInTheCurrentMonth()
     }
 }
 
-
 int Date::getDaysBetween(Date otherDate)
 {
     int daysCounted = 0;
@@ -46,6 +45,7 @@ int Date::getDaysBetween(Date otherDate)
 
 
 }
+
 
 bool Date::setDay(int day)
 {
@@ -138,41 +138,85 @@ Date Date::newDateByOffsetInDays(int offsetInDays)
     int remainingOffset = offsetInDays;
     Date newDate(day, month, year);
 
-    // Initial
-
-    if(remainingOffset > newDate.getDaysInTheCurrentMonth() - newDate.day)
+    if(remainingOffset >= 0)
     {
-        int oldDay = newDate.day;
-        newDate.day = newDate.getDaysInTheCurrentMonth();
-        remainingOffset =  remainingOffset - (newDate.getDaysInTheCurrentMonth() - oldDay);
-    }
-    else
-    {
-        newDate.day += remainingOffset;
-        remainingOffset = 0;
-    }
 
-    // Main loop
+        // Initial
 
-    while(remainingOffset > 0)
-    {
-        if(!newDate.setMonth(newDate.month + 1))
+        if(remainingOffset > newDate.getDaysInTheCurrentMonth() - newDate.day)
         {
-            newDate.setYear(newDate.year + 1);
-            newDate.setMonth(1);
-        }
-        newDate.day = 0;
-
-
-        if(remainingOffset > newDate.getDaysInTheCurrentMonth())
-        {
+            int oldDay = newDate.day;
             newDate.day = newDate.getDaysInTheCurrentMonth();
-            remainingOffset -= newDate.getDaysInTheCurrentMonth();
+            remainingOffset =  remainingOffset - (newDate.getDaysInTheCurrentMonth() - oldDay);
         }
         else
         {
             newDate.day += remainingOffset;
             remainingOffset = 0;
+        }
+
+        // Main loop
+
+        while(remainingOffset > 0)
+        {
+            if(!newDate.setMonth(newDate.month + 1))
+            {
+                newDate.setYear(newDate.year + 1);
+                newDate.setMonth(1);
+            }
+            newDate.day = 0;
+
+
+            if(remainingOffset > newDate.getDaysInTheCurrentMonth())
+            {
+                newDate.day = newDate.getDaysInTheCurrentMonth();
+                remainingOffset -= newDate.getDaysInTheCurrentMonth();
+            }
+            else
+            {
+                newDate.day += remainingOffset;
+                remainingOffset = 0;
+            }
+        }
+    }
+    else
+    {
+        // Initial
+        remainingOffset = remainingOffset*(-1);
+
+        if(remainingOffset > (newDate.day - 1))
+        {
+            int oldDay = newDate.day;
+            newDate.day = 1;
+            remainingOffset = remainingOffset - (oldDay - 1);
+        }
+        else
+        {
+            newDate.day -= remainingOffset;
+            remainingOffset = 0;
+        }
+
+        // Main loop
+
+        while(remainingOffset > 0)
+        {
+            if(!newDate.setMonth(newDate.month - 1))
+            {
+                newDate.setYear(newDate.year - 1);
+                newDate.setMonth(12);
+            }
+            newDate.day = newDate.getDaysInTheCurrentMonth() + 1;
+
+            if(remainingOffset > newDate.getDaysInTheCurrentMonth())
+            {
+                newDate.day = 1;
+                remainingOffset -= newDate.getDaysInTheCurrentMonth();
+            }
+            else
+            {
+                newDate.day -= remainingOffset;
+                remainingOffset = 0;
+            }
         }
     }
 
