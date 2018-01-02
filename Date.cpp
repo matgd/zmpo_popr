@@ -2,9 +2,12 @@
 
 Date::Date(int day, int month, int year)
 {
-    this->day = day;
-    this->month = month;
-    this->year = year;
+    if(!setDay(day))
+        this->day = 1;
+    if(!setMonth(month))
+        this->month = 1;
+    if(!setYear(year))
+        this->year = 1900;
 }
 
 
@@ -35,15 +38,80 @@ int Date::getDaysInTheCurrentMonth()
 int Date::getDaysBetween(Date otherDate)
 {
     int daysCounted = 0;
-    int dayCounter = day;
-    int monthCounter = month;
-    int yearCounter = year;
+    Date dateCounter(day, month, year);
 
-    return 0;
+    if(dateCounter < otherDate)
+    {
+        while(dateCounter.getYear() < otherDate.getYear())
+        {
+            daysCounted += dateCounter.getDaysInTheCurrentMonth() - dateCounter.day;
+            dateCounter.day = dateCounter.getDaysInTheCurrentMonth();
 
-    // checked when other is later
+            if(!dateCounter.setMonth(dateCounter.getMonth() + 1))
+            {
+                dateCounter.month = 1;
+                dateCounter.setYear(dateCounter.year + 1);
+            }
 
+            dateCounter.day = 0;
+        }
 
+        while(dateCounter.getMonth() < otherDate.getMonth())
+        {
+            daysCounted += dateCounter.getDaysInTheCurrentMonth() - dateCounter.day;
+            dateCounter.day = dateCounter.getDaysInTheCurrentMonth();
+
+            if(dateCounter.getMonth() < otherDate.getMonth())
+            {
+                dateCounter.setMonth(dateCounter.month + 1);
+            }
+
+            dateCounter.day = 0;
+        }
+
+        while(dateCounter.getDay() < otherDate.getDay())
+        {
+            daysCounted += otherDate.getDay() - dateCounter.getDay();
+            dateCounter.setDay(otherDate.day);
+        }
+
+    }
+    else
+    {
+        while(dateCounter.getYear() > otherDate.getYear())
+        {
+            daysCounted += dateCounter.day;
+
+            if(!dateCounter.setMonth(dateCounter.getMonth() - 1))
+            {
+                dateCounter.setMonth(12);
+                dateCounter.setYear(dateCounter.year - 1);
+            }
+
+            dateCounter.day = dateCounter.getDaysInTheCurrentMonth();
+
+        }
+
+        while(dateCounter.getMonth() > otherDate.getMonth())
+        {
+            daysCounted += dateCounter.day;
+
+            if(dateCounter.getMonth() > otherDate.getMonth())
+            {
+                dateCounter.setMonth(dateCounter.month - 1);
+            }
+
+            dateCounter.day = dateCounter.getDaysInTheCurrentMonth();
+        }
+
+        while(dateCounter.getDay() > otherDate.getDay())
+        {
+            daysCounted += dateCounter.getDay() - otherDate.getDay();
+            dateCounter.setDay(otherDate.day);
+        }
+    }
+
+    return daysCounted;
 }
 
 
